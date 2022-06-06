@@ -23,7 +23,7 @@ export function verifyJwt(token : string) {
     catch(e : any) {
         return {
             valid : false,
-            expired : e.name === 'jwt expired',
+            expired : true,
             decoded : null
         }
     }
