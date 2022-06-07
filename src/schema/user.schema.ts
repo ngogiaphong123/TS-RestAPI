@@ -9,10 +9,9 @@ export const createUserSchema = object ({
         }).email("Not a valid email address."),
         password : string({
             required_error : "Password is required"
-
         }).min(6,"Password must be at least 6 characters"),
         passwordConfirmation : string({
-            required_error : "Password Confirm is required"
+            required_error : "Password confirm is required"
         }).min(6,"Password confirm must be at least 6 characters")
     }).refine((data) => data.password === data.passwordConfirmation, {
         message : "Password do not match. Please try again",
