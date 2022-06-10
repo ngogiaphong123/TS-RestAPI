@@ -1,6 +1,6 @@
 import { createUserSchema } from './schema/user.schema';
 import {Express, Request, Response} from "express"
-import { createUserHandler } from "./controller/user.controller";
+import { createUserHandler,getCurrentUSer } from "./controller/user.controller";
 import validate from "./middleware/validateResource";
 import { createUserSessionHandler, deleteSessionHandler, getUserSessionsHandler } from './controller/session.controller';
 import { createSessionSchema } from './schema/session.schema';
@@ -12,6 +12,7 @@ function routes(app : Express) {
         res.send("OK");
     })
     //? User and sessions routes
+    app.get('/api/me' , requireUser, getCurrentUSer)
     app.post('/api/users' ,validate(createUserSchema) ,createUserHandler)
     app.post('/api/sessions' ,validate(createSessionSchema) ,createUserSessionHandler)
     app.get('/api/sessions',requireUser,getUserSessionsHandler)

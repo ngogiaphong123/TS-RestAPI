@@ -3,11 +3,11 @@ import {get} from 'lodash'
 import { verifyJwt } from '../utils/jwt.utils';
 import { reIssueAccessToken } from '../service/session.service';
 const deserializeUser = async (req : Request, res : Response, next: NextFunction) => {
-    const accessToken = get(req, "headers.authorization", "").replace(
+    const accessToken = get(req,"cookies.accessToken") ||get(req, "headers.authorization", "").replace(
         /^Bearer\s/,
         ""
     );
-    const refreshToken = get(req, "headers.x-refresh", "");
+    const refreshToken = get(req, "cookies.refreshToken") ||get(req, "headers.x-refresh", "");
     if(!accessToken) {
         return next();
     }
@@ -20,6 +20,14 @@ const deserializeUser = async (req : Request, res : Response, next: NextFunction
         const newAccessToken = await reIssueAccessToken({refreshToken})
         if(newAccessToken) {
             res.setHeader('x-access-token',newAccessToken);
+            res.cookie("accessToken",newAccessToken,{
+                maxAge : 900000,
+                httpOnly : true,
+                domain : 'localhost',
+                path : '/',
+                sameSite : "strict",
+                secure : false,
+            })
         }
         const {decoded} = verifyJwt(newAccessToken as string);
         console.log(decoded);
